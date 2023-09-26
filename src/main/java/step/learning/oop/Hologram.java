@@ -1,5 +1,9 @@
 package step.learning.oop;
 
+import com.google.gson.JsonObject;
+
+import java.text.ParseException;
+
 public class Hologram extends Literature {
     private int version;
 
@@ -19,5 +23,25 @@ public class Hologram extends Literature {
     @Override
     public String getCard() {
         return String.format("Hologram: '%s' v%d", getTitle(), getVersion());
+    }
+
+    public static Hologram fromJson(JsonObject jsonObject) throws ParseException {
+        String[] requiredFields = {"title", "version"};
+        for (String field : requiredFields) {
+            if(!jsonObject.has(field)) throw new ParseException(String.format("Field '%s' is required", field), 0);
+        }
+
+        return new Hologram(
+                jsonObject.get(requiredFields[0]).getAsString(),
+                jsonObject.get(requiredFields[1]).getAsInt()
+        );
+    }
+
+    public static boolean isParseableFromJson(JsonObject jsonObject) {
+        String[] requiredFields = {"title", "version"};
+        for (String field : requiredFields) {
+            if(!jsonObject.has(field)) return false;
+        }
+        return true;
     }
 }

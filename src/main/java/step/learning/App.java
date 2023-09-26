@@ -12,6 +12,6 @@ public class App
     {
         //new BasicsDemo().run();
         //new FilesDemo().run();
-        new OOPDemo().run();
+        new OOPDemo().run4();
     }
 }

@@ -1,8 +1,15 @@
 package step.learning.oop;
 
+import com.google.gson.*;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class Library {
     private final List<Literature> literature;
@@ -13,6 +20,48 @@ public class Library {
 
     public void add(Literature item) {
         literature.add(item);
+    }
+
+    public List<Literature> getLiterature() {
+        return this.literature;
+    }
+
+    public void save() throws IOException {
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        FileWriter writer = new FileWriter("./src/main/resources/library.json");
+        writer.write(gson.toJson(getLiterature()));
+        writer.close();
+    }
+
+    public void load() {
+        try (
+            InputStreamReader reader = new InputStreamReader(
+                Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream("library.json"))
+            )
+        ) {
+            for (JsonElement item : JsonParser.parseReader(reader).getAsJsonArray()) {
+                literature.add(this.fromJson(item.getAsJsonObject()));
+            }
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public Literature fromJson(JsonObject jsonObject) throws ParseException {
+        if(Book.isParseableFromJson(jsonObject)) {
+            return Book.fromJson(jsonObject);
+        }
+        else if(Journal.isParseableFromJson(jsonObject)) {
+            return Journal.fromJson(jsonObject);
+        }
+        else if(Hologram.isParseableFromJson(jsonObject)) {
+            return Hologram.fromJson(jsonObject);
+        }
+        else if(Newspaper.isParseableFromJson(jsonObject)) {
+            return Newspaper.fromJson(jsonObject);
+        }
+        throw new ParseException("Literature type unrecognized", 0);
     }
 
     public void printAllCards() {
