@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 
 import java.text.ParseException;
 
+@Serializable
 public class Hologram extends Literature {
     private int version;
 
@@ -25,6 +26,7 @@ public class Hologram extends Literature {
         return String.format("Hologram: '%s' v%d", getTitle(), getVersion());
     }
 
+    @FromJsonParser
     public static Hologram fromJson(JsonObject jsonObject) throws ParseException {
         String[] requiredFields = {"title", "version"};
         for (String field : requiredFields) {
@@ -37,6 +39,7 @@ public class Hologram extends Literature {
         );
     }
 
+    @ParseChecker
     public static boolean isParseableFromJson(JsonObject jsonObject) {
         String[] requiredFields = {"title", "version"};
         for (String field : requiredFields) {
