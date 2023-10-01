@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -113,8 +114,10 @@ public class Library {
                 }
             }
         }
-        catch( Exception ex ) {
+        catch( ParseException ex ) {
             throw new ParseException( "Reflection error: " + ex.getMessage(), 0);
+        } catch (InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e.getCause());
         }
 //        if(Book.isParseableFromJson(jsonObject)) {
 //            return Book.fromJson(jsonObject);
